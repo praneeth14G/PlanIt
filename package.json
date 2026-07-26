@@ -1,0 +1,22 @@
+{
+  "name": "flam-trip-planner",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "server",
+    "frontend"
+  ],
+  "scripts": {
+    "start": "concurrently -n server,frontend -c blue,green \"npm run dev -w server\" \"npm run dev -w frontend\"",
+    "dev": "npm run start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  },
+  "allowScripts": {
+    "@google/genai@2.13.0": true,
+    "esbuild@0.28.1": true,
+    "protobufjs@7.6.5": true,
+    "fsevents@2.3.3": true
+  }
+}

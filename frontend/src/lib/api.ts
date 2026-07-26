@@ -1,0 +1,36 @@
+import type { ApiErrorBody, Itinerary, ItineraryWithIds } from "@flam/shared";
+
+export class TripPlannerError extends Error {}
+
+export async function fetchItinerary(prompt: string, signal: AbortSignal): Promise<ItineraryWithIds> {
+  const res = await fetch("/api/plan-trip", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt }),
+    signal,
+  });
+
+  let body: unknown;
+  try {
+    body = await res.json();
+  } catch {
+    throw new TripPlannerError("The server sent back something that wasn't JSON.");
+  }
+
+  if (!res.ok) {
+    const message = (body as ApiErrorBody)?.error?.message;
+    throw new TripPlannerError(message || "Something went wrong. Try again.");
+  }
+
+  return withIds(body as Itinerary);
+}
+
+function withIds(itinerary: Itinerary): ItineraryWithIds {
+  return {
+    ...itinerary,
+    days: itinerary.days.map((day) => ({
+      ...day,
+      stops: day.stops.map((stop) => ({ ...stop, id: crypto.randomUUID() })),
+    })),
+  };
+}
