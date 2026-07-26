@@ -385,4 +385,9 @@
   .day-header {
     padding: 12px;
   }
+
+  .refine-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
