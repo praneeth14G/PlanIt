@@ -83,16 +83,15 @@ Read `INSTRUCTIONS.md` first if this is a new session. This file is just
 - [x] `retry()` reworked to replay whichever action failed (plan or refine)
       via a `lastArgsRef`, instead of always re-submitting the original prompt.
 
-## In flight / next
-
-- [ ] Re-verify mobile layout after the rename/polish/refinement-loop
-      changes (nothing structural should have broken it, but worth a fresh
-      look since CSS changed).
-- [ ] Write `~/PlanIt_Interview_Prep.txt` (outside this folder) — a study
-      doc covering the app, the architecture, every key file, the
-      reliability design and why, the refinement loop's design tradeoff,
-      the two real bugs found during dev, and anticipated interview
-      questions tied back to the original assignment PDF.
+- [x] Mobile re-verified by user after the rename/polish/refinement-loop
+      changes — header/logo, day-card expand animation, and the new refine
+      bar all confirmed working on a small screen.
+- [x] Wrote `~/PlanIt_Interview_Prep.txt` (outside this folder, per request)
+      — a study doc covering what the app does, the architecture and why,
+      a file-by-file walkthrough, the full reliability design broken down
+      mechanism by mechanism, the refinement loop's design tradeoff, both
+      real bugs found during dev, deliberate non-goals, and a Q&A section
+      tied back to the assignment PDF's requirements.
 
 ## Open decisions
 
