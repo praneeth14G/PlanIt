@@ -64,13 +64,18 @@ Read `INSTRUCTIONS.md` first if this is a new session. This file is just
       now aborts the in-flight request and starts a fresh one, which is
       exactly what the guard is for. Re-verify in browser after this fix.
 - [x] Mobile layout confirmed working by user.
-- [ ] README.md (setup, usage, AI-usage note, limitations, time spent) —
-      not started yet, currently only has Vite's default content
-- [ ] Screen recording of the app working
-- [ ] Stretch, only if time remains: refinement loop > localStorage session
-      save > dark mode/animation (in that priority order per the plan)
+- [x] Double-submit fix re-verified working by user in the browser.
+- [x] README.md written: setup, usage, architecture, AI-usage note, known
+      limitations all filled in. Only "time spent" is still a placeholder.
 
 ## Open decisions
 
-- None currently open — architecture decisions are locked in per
-  `INSTRUCTIONS.md`.
+- **Time spent**: not logged yet — need actual hours to fill into the
+  README before submitting.
+- **GitHub repo**: not created/pushed yet. Need to decide public vs. private
+  (+ grant access), and confirm before any push happens.
+- **Screen recording**: still needed for submission — a user-side action
+  (recording their own screen), not something done from here.
+- **Stretch goals**: none started. Only worth doing if time remains after
+  the above — priority order per `INSTRUCTIONS.md`/original plan: refinement
+  loop > localStorage session save > dark mode/animation.
