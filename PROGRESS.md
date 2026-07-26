@@ -93,15 +93,39 @@ Read `INSTRUCTIONS.md` first if this is a new session. This file is just
       real bugs found during dev, deliberate non-goals, and a Q&A section
       tied back to the assignment PDF's requirements.
 
+- [x] Time spent filled into README (~9h: 8h core budget + ~1h refinement
+      loop stretch), broken down by phase.
+- [x] GitHub repo created (public) and pushed: https://github.com/praneeth14G/PlanIt
+      — installed `gh` via Homebrew, user authenticated via `gh auth login`
+      (device code flow), `gh repo create` + `gh auth setup-git` + push.
+- [x] Deployment prep, attempt 1 (Render): added render.yaml, configurable
+      `VITE_API_URL` in the frontend, non-watch prod start script for the
+      server. Hit two real blockers trying to actually deploy: Render's
+      blueprint validation rejected `plan: free` for web services, and
+      after working around that it asked for billing details even for the
+      free tier.
+- [x] **Switched deployment target to Vercel** (no card required for hobby
+      projects). Removed render.yaml. Refactored the plan-trip logic out of
+      the Express route into `server/src/planTrip.ts` — a plain,
+      framework-agnostic `handlePlanTrip()` function — so both
+      `server/src/routes/plan.ts` (Express, local dev) and the new
+      `api/plan-trip.ts` (Vercel serverless function, production) are thin
+      adapters over the exact same logic. Added `vercel.json` (single
+      project: static frontend build + the api function on the same
+      origin, no cross-origin config needed). Verified locally end-to-end
+      after the refactor — identical behavior to before.
+- [x] Updated `INSTRUCTIONS.md` and `~/PlanIt_Interview_Prep.txt` to reflect
+      the Vercel architecture and the Render→Vercel pivot story (a good,
+      honest thing to be able to explain live if asked).
+
+## In flight / next
+
+- [ ] Actually deploy on Vercel and get the live URL — trying the `vercel`
+      CLI directly (avoids the GitHub-App-repo-connection friction hit with
+      Render's dashboard flow).
+- [ ] Once live: add the URL to the README's "Live demo" line, commit, push.
+- [ ] Screen recording — still needed for submission, a user-side action.
+
 ## Open decisions
 
-- **Time spent**: not logged yet — need actual hours to fill into the
-  README before submitting.
-- **GitHub repo**: not created/pushed yet. Need to decide public vs. private
-  (+ grant access), and confirm before any push happens.
-- **Screen recording**: still needed for submission — a user-side action
-  (recording their own screen), not something done from here.
-- **Remaining stretch goals**: refinement loop is done. localStorage session
-  save and a manual dark-mode toggle are not implemented (dark mode already
-  follows OS preference automatically via CSS, just no in-app switch) —
-  only worth doing if time remains.
+- None currently blocking — see "In flight / next" above for what's left.
