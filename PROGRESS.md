@@ -55,12 +55,15 @@ Read `INSTRUCTIONS.md` first if this is a new session. This file is just
         shapes (empty object, wrong types, missing required fields, null,
         array-instead-of-object) — all correctly rejected, only a valid
         shape accepted
-- [ ] Still to verify manually in-browser (needs a human, not curl-testable):
-      rapid double-submit while a request is in flight — confirm the older
-      response never overwrites the newer one. Code-reviewed and believed
-      correct (abort + request-id double guard in `useTripPlanner.ts`) but
-      not yet clicked through live.
-- [ ] Real mobile viewport test (not just CSS review)
+- [x] User manually tested rapid double-submit and found a real bug: the
+      submit button was disabled while `state.status === "loading"`, so a
+      second submit could never actually fire — the abort/stale-response
+      guard in `useTripPlanner.ts` was correct but unreachable. Fixed by no
+      longer disabling submit during loading (`TripForm` now takes
+      `isLoading` just for the button label, not to gate it); resubmitting
+      now aborts the in-flight request and starts a fresh one, which is
+      exactly what the guard is for. Re-verify in browser after this fix.
+- [x] Mobile layout confirmed working by user.
 - [ ] README.md (setup, usage, AI-usage note, limitations, time spent) —
       not started yet, currently only has Vite's default content
 - [ ] Screen recording of the app working
