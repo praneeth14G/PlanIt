@@ -44,12 +44,39 @@ along anything malformed.
 
 ## AI-usage note
 
-_(fill in honestly once the build is further along — which parts were
-scaffolded/assisted vs. hand-written, what tools were used for what)_
+I used Claude Code throughout — for scaffolding the monorepo, writing the
+initial implementation of the components/hooks/backend route, and for
+debugging (e.g. it caught that `gemini-2.5-flash` had been deprecated for
+new API keys by reading the actual error from the API and switching to
+`gemini-flash-latest`). I drove the architecture decisions (the reliability
+design — timeout, stale-response guard, validation boundary — is the actual
+point of this assignment, so I made sure I understood and could defend every
+piece of it, not just accepted what was generated).
+
+Worth calling out: manual testing caught a real bug that code review alone
+missed — the submit button was disabled while a request was loading, which
+meant the resubmit-before-first-response scenario (the whole reason the
+abort/request-id guard exists) could never actually be triggered. The guard
+code was correct; the UI in front of it silently made it unreachable. Fixed
+by only using loading state for the button label, not to gate the button.
 
 ## Known limitations
 
-_(fill in as they're discovered)_
+- No automated test suite — given the 8-hour budget, verification was
+  manual/exploratory: deliberately breaking each failure path (bad key,
+  artificial timeout, empty/malformed/wrong-shape model output, backend
+  killed mid-request) and confirming clean handling, plus manual browser
+  testing for interactivity, double-submit, and mobile layout.
+- No refinement loop (follow-up prompts that edit the existing itinerary) —
+  listed as a stretch goal, not implemented.
+- No streaming — deliberately skipped. Streaming partial JSON while still
+  validating the final shape against the schema adds real complexity and
+  works against the reliability focus that's the actual point of this
+  assignment, so it wasn't worth the tradeoff in the time available.
+- No session save/reload or dark mode (stretch goals, not implemented).
+- Reordering is within a day only — no moving a stop to a different day.
+- Primarily tested in Chrome/Safari on macOS; not tested against older
+  browsers.
 
 ## Time spent
 
