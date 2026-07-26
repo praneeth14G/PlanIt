@@ -50,7 +50,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 
 export async function generateItinerary(prompt: string): Promise<string> {
   const call = ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-flash-latest",
     contents: `You are a trip-planning assistant. Given a traveler's description of a trip, produce a realistic day-by-day itinerary.
 
 Trip description:

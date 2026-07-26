@@ -29,11 +29,17 @@ Read `INSTRUCTIONS.md` first if this is a new session. This file is just
       returns 400 `INVALID_INPUT`, and the Vite dev proxy correctly forwards
       `/api/*` to the Express server. Dev servers are running in the
       background (backend :8787, frontend :5173).
-- [ ] **Blocked on Gemini API key** — user is getting one from
-      https://aistudio.google.com/apikey. Once it's in `server/.env`
-      (restart `npm start` after), do a real end-to-end run: submit a real
-      trip prompt in the browser, confirm the itinerary renders and is
-      interactive (expand/collapse, remove, reorder).
+- [x] Real Gemini key wired in, end-to-end verified via curl: a real trip
+      prompt returns a fully-valid itinerary matching the shared schema
+      exactly (HTTP 200, no validation errors). Note: `gemini-2.5-flash`
+      returned a 404 ("no longer available to new users") — switched to
+      `gemini-flash-latest` (an alias Google keeps pointed at their current
+      recommended flash model, so it won't go stale like a pinned version
+      number would).
+- [ ] Haven't visually verified the browser UI yet (no browser-automation
+      tool available in this environment) — opened `localhost:5173` for the
+      user to check directly. Need their confirmation that rendering,
+      expand/collapse, remove, and reorder all work as expected.
 - [ ] Deliberately break things to verify failure handling: bad/missing API
       key, a prompt likely to produce truncated/malformed output, rapid
       double-submit (confirm no stale-response overwrite)

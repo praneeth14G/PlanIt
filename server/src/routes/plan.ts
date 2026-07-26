@@ -18,6 +18,7 @@ planRouter.post("/plan-trip", async (req, res) => {
   try {
     raw = await generateItinerary(prompt);
   } catch (err) {
+    console.error("gemini call failed:", err);
     const timedOut = err instanceof Error && err.message === "TIMEOUT";
     res.status(timedOut ? 504 : 502).json({
       error: {
