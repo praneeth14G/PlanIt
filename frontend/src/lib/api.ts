@@ -2,12 +2,17 @@ import type { ApiErrorBody, Itinerary, ItineraryWithIds } from "@flam/shared";
 
 export class TripPlannerError extends Error {}
 
+// In dev this is empty and Vite's proxy (vite.config.ts) forwards /api to the
+// local Express server. In production there's no dev proxy, so this points
+// at the deployed backend's URL instead (set at build time).
+const API_BASE = import.meta.env.VITE_API_URL ?? "";
+
 export async function fetchItinerary(
   prompt: string,
   signal: AbortSignal,
   current?: ItineraryWithIds,
 ): Promise<ItineraryWithIds> {
-  const res = await fetch("/api/plan-trip", {
+  const res = await fetch(`${API_BASE}/api/plan-trip`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(current ? { prompt, currentItinerary: withoutIds(current) } : { prompt }),

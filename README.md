@@ -4,6 +4,8 @@ Describe a trip in plain language, get back a day-by-day itinerary you can
 expand, tweak, reorder, and refine with follow-up instructions — not a chat
 transcript.
 
+**Live demo:** _(link goes here once deployed)_
+
 ## Setup
 
 ```bash
@@ -92,6 +94,29 @@ by only using loading state for the button label, not to gate the button.
 - Primarily tested in Chrome/Safari on macOS; not tested against older
   browsers.
 
+## Deployment
+
+Deployed on [Render](https://render.com) as two free-tier services from this
+repo, defined in `render.yaml`: a static site for `frontend/` and a web
+service for `server/` (`GEMINI_API_KEY` set as a Render secret, never
+committed). Locally the frontend talks to the backend through Vite's dev
+proxy; in production it uses `VITE_API_URL` (set at build time) instead,
+since there's no dev proxy once deployed. See `render.yaml` for the exact
+build/start commands.
+
 ## Time spent
 
-_(fill in at the end)_
+~9 hours total (assignment's 8-hour core budget, plus ~1 hour on the
+refinement loop stretch goal beyond that):
+
+- Reading the brief, deciding on trip planner + the overall architecture: 0.5h
+- Project scaffolding (Vite + Express + npm workspaces, wiring up the Gemini
+  SDK): 1h
+- Data contract (Zod schema) + backend route + prompt design: 1.25h
+- Frontend state machine + basic itinerary rendering, end to end: 1.25h
+- Interactivity (expand/collapse, remove, reorder stops): 1h
+- Failure-handling hardening: timeout, abort/stale-response guard,
+  deliberately breaking every failure path to confirm clean handling: 1.25h
+- Mobile responsive pass + UI polish: 1h
+- Refinement loop (stretch goal): 1h
+- README, manual testing pass, commits, screen recording: 0.75h
