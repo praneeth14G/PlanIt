@@ -1,6 +1,7 @@
 {
   "name": "flam-trip-planner",
   "private": true,
+  "type": "module",
   "workspaces": [
     "shared",
     "server",

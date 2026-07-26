@@ -1,4 +1,5 @@
-import { itinerarySchema, type ApiErrorBody, type Itinerary } from "@flam/shared";
+// relative path, not "@flam/shared" - Vercel's function bundler traces relative imports but not the workspace package's raw-.ts "main"
+import { itinerarySchema, type ApiErrorBody, type Itinerary } from "../../shared/src/itinerary.js";
 import { generateItinerary } from "./gemini.js";
 
 export interface PlanTripResult {
