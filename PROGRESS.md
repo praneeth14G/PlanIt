@@ -36,13 +36,30 @@ Read `INSTRUCTIONS.md` first if this is a new session. This file is just
       `gemini-flash-latest` (an alias Google keeps pointed at their current
       recommended flash model, so it won't go stale like a pinned version
       number would).
-- [ ] Haven't visually verified the browser UI yet (no browser-automation
-      tool available in this environment) — opened `localhost:5173` for the
-      user to check directly. Need their confirmation that rendering,
-      expand/collapse, remove, and reorder all work as expected.
-- [ ] Deliberately break things to verify failure handling: bad/missing API
-      key, a prompt likely to produce truncated/malformed output, rapid
-      double-submit (confirm no stale-response overwrite)
+- [x] Browser UI confirmed working by user (rendering, expand/collapse,
+      remove, reorder all checked out in a real browser at localhost:5173).
+- [x] Deliberately broke each failure path and confirmed clean handling,
+      no crashes:
+      - missing API key → 502 `MODEL_ERROR`
+      - artificially tiny timeout → 504 `TIMEOUT` (confirmed the
+        `withTimeout` race actually fires, then reverted to the real 20s)
+      - empty model response, unparseable JSON, and schema-mismatched JSON
+        (stubbed via temporary test-only branches in `generateItinerary`,
+        removed immediately after) → each returns the right `BAD_SHAPE`/
+        `MODEL_ERROR` code, never a crash
+      - backend killed entirely while frontend up → Vite proxy returns a
+        502 with an empty body; tightened `frontend/src/lib/api.ts` to give
+        a distinct "couldn't reach the server" message for that case
+        instead of a confusing "wasn't valid JSON" message
+      - `shared/src/itinerary.ts` schema itself checked against 7 malformed
+        shapes (empty object, wrong types, missing required fields, null,
+        array-instead-of-object) — all correctly rejected, only a valid
+        shape accepted
+- [ ] Still to verify manually in-browser (needs a human, not curl-testable):
+      rapid double-submit while a request is in flight — confirm the older
+      response never overwrites the newer one. Code-reviewed and believed
+      correct (abort + request-id double guard in `useTripPlanner.ts`) but
+      not yet clicked through live.
 - [ ] Real mobile viewport test (not just CSS review)
 - [ ] README.md (setup, usage, AI-usage note, limitations, time spent) —
       not started yet, currently only has Vite's default content

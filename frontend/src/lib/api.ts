@@ -14,7 +14,11 @@ export async function fetchItinerary(prompt: string, signal: AbortSignal): Promi
   try {
     body = await res.json();
   } catch {
-    throw new TripPlannerError("The server sent back something that wasn't JSON.");
+    throw new TripPlannerError(
+      res.ok
+        ? "The server sent back something that wasn't valid JSON."
+        : "Couldn't reach the server. Try again in a moment.",
+    );
   }
 
   if (!res.ok) {
