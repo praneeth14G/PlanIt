@@ -23,12 +23,17 @@ Read `INSTRUCTIONS.md` first if this is a new session. This file is just
 
 ## In flight / next
 
+- [x] git init + first commit (scaffold committed)
+- [x] Smoke-tested without a real key: missing/invalid key correctly returns
+      a clean 502 `MODEL_ERROR` (not a crash), empty/missing prompt correctly
+      returns 400 `INVALID_INPUT`, and the Vite dev proxy correctly forwards
+      `/api/*` to the Express server. Dev servers are running in the
+      background (backend :8787, frontend :5173).
 - [ ] **Blocked on Gemini API key** — user is getting one from
-      https://aistudio.google.com/apikey. Once it's in `server/.env`, do a
-      real end-to-end run: `npm start`, submit a real trip prompt, confirm
-      the itinerary renders.
-- [ ] git init + first commit (scaffold), then commit in the remaining small
-      chunks as work continues
+      https://aistudio.google.com/apikey. Once it's in `server/.env`
+      (restart `npm start` after), do a real end-to-end run: submit a real
+      trip prompt in the browser, confirm the itinerary renders and is
+      interactive (expand/collapse, remove, reorder).
 - [ ] Deliberately break things to verify failure handling: bad/missing API
       key, a prompt likely to produce truncated/malformed output, rapid
       double-submit (confirm no stale-response overwrite)
