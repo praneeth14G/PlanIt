@@ -15,7 +15,7 @@ function App() {
       <h1>Trip Planner</h1>
       <p className="tagline">Describe a trip in your own words, get a day-by-day plan you can rearrange.</p>
 
-      <TripForm value={prompt} onValueChange={setPrompt} disabled={isLoading} onSubmit={submit} />
+      <TripForm value={prompt} onValueChange={setPrompt} isLoading={isLoading} onSubmit={submit} />
 
       <StatusBanner
         status={state.status}

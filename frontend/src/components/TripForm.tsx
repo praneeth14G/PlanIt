@@ -9,11 +9,11 @@ const EXAMPLES = [
 interface Props {
   value: string;
   onValueChange: (value: string) => void;
-  disabled: boolean;
+  isLoading: boolean;
   onSubmit: (prompt: string) => void;
 }
 
-export function TripForm({ value, onValueChange, disabled, onSubmit }: Props) {
+export function TripForm({ value, onValueChange, isLoading, onSubmit }: Props) {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const trimmed = value.trim();
@@ -34,19 +34,14 @@ export function TripForm({ value, onValueChange, disabled, onSubmit }: Props) {
       <div className="trip-form-footer">
         <div className="examples">
           {EXAMPLES.map((example) => (
-            <button
-              key={example}
-              type="button"
-              className="example-chip"
-              disabled={disabled}
-              onClick={() => onValueChange(example)}
-            >
+            <button key={example} type="button" className="example-chip" onClick={() => onValueChange(example)}>
               {example}
             </button>
           ))}
         </div>
-        <button type="submit" className="submit-button" disabled={disabled || !value.trim()}>
-          {disabled ? "Planning…" : "Plan trip"}
+        {/* not disabled while loading - resubmitting should cancel the old request, not be blocked */}
+        <button type="submit" className="submit-button" disabled={!value.trim()}>
+          {isLoading ? "Re-planning…" : "Plan trip"}
         </button>
       </div>
     </form>
