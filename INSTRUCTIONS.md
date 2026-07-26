@@ -32,7 +32,9 @@ regenerating from scratch (stretch goal, implemented — see below).
 - `frontend/` — Vite + React 19 + TypeScript. Talks only to `/api/*` on the
   same origin (Vite dev proxy → `server/`, see `vite.config.ts`).
 - `server/` — Express 5 + TypeScript. Holds `GEMINI_API_KEY` (never sent to
-  the browser). One route: `POST /api/plan-trip`.
+  the browser). One route: `POST /api/plan-trip`. Its handler is a thin
+  wrapper around `server/src/planTrip.ts`'s `handlePlanTrip()` - the actual
+  validation/error logic is framework-agnostic on purpose (see Deployment).
 - `shared/` — Zod schema (`itinerary.ts`) that is the single source of truth
   for "what does a valid itinerary look like." Both frontend and backend
   import it.
@@ -94,11 +96,26 @@ never to disable it.
 
 - `shared/src/itinerary.ts` — the data contract (Zod schema + types)
 - `server/src/gemini.ts` — model call, prompt, timeout
-- `server/src/routes/plan.ts` — validation + error normalization
+- `server/src/planTrip.ts` — the actual validation/error-handling logic,
+  framework-agnostic (no Express, no Vercel types)
+- `server/src/routes/plan.ts` — Express adapter, just calls `handlePlanTrip()`
+- `api/plan-trip.ts` — Vercel serverless function adapter, also just calls
+  `handlePlanTrip()` — this is what actually runs in production
 - `frontend/src/hooks/useTripPlanner.ts` — the state machine
 - `frontend/src/lib/api.ts` — fetch wrapper, assigns/strips client-side stop ids
 - `frontend/src/components/` — `TripForm`, `StatusBanner`, `ItineraryView`,
   `DayCard`, `StopRow`, `RefineBar` (the "tweak it" follow-up input)
+
+## Deployment
+
+Vercel, one project (`vercel.json` at repo root): frontend builds to static
+files, `api/plan-trip.ts` runs as a serverless function on the same domain -
+no cross-origin setup needed. (Render was tried first; its blueprint
+rejected `plan: free` for web services and then asked for billing details
+even on the free tier, so we switched to Vercel, which doesn't require a
+card for hobby projects.) `frontend/src/lib/api.ts` still supports an
+optional `VITE_API_URL` env var for a split-origin deployment, but it's
+unused here since same-origin needs no base URL at all.
 
 ## Running it
 

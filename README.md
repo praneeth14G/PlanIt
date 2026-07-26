@@ -96,13 +96,19 @@ by only using loading state for the button label, not to gate the button.
 
 ## Deployment
 
-Deployed on [Render](https://render.com) as two free-tier services from this
-repo, defined in `render.yaml`: a static site for `frontend/` and a web
-service for `server/` (`GEMINI_API_KEY` set as a Render secret, never
-committed). Locally the frontend talks to the backend through Vite's dev
-proxy; in production it uses `VITE_API_URL` (set at build time) instead,
-since there's no dev proxy once deployed. See `render.yaml` for the exact
-build/start commands.
+Deployed on [Vercel](https://vercel.com) as a single project (`vercel.json`
+at the repo root): the frontend builds to static files, and `api/plan-trip.ts`
+runs as a serverless function on the same domain — so there's no
+cross-origin config needed in production, unlike a two-service split.
+
+The serverless function doesn't duplicate the Express route's logic: both it
+and `server/src/routes/plan.ts` (used for local dev) call the same
+framework-agnostic `handlePlanTrip()` in `server/src/planTrip.ts`. Locally,
+that runs inside the actual Express server; in production, Vercel's Node
+runtime calls it directly. Same validation, same error handling, same
+reliability guarantees either way — just a thinner adapter in production.
+
+`GEMINI_API_KEY` is set as a Vercel environment variable, never committed.
 
 ## Time spent
 
