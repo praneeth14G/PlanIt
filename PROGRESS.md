@@ -67,6 +67,32 @@ Read `INSTRUCTIONS.md` first if this is a new session. This file is just
 - [x] Double-submit fix re-verified working by user in the browser.
 - [x] README.md written: setup, usage, architecture, AI-usage note, known
       limitations all filled in. Only "time spent" is still a placeholder.
+- [x] Renamed app from "Trip Planner" to **PlanIt** (title, header, README).
+- [x] UI/UX polish pass: smooth grid-based expand/collapse transition on day
+      cards (no JS height measuring), fade-in on the itinerary appearing,
+      small header logo mark, more visible idle/empty state, subtle card
+      hover shadow.
+- [x] **Refinement loop implemented** (stretch goal): `RefineBar` component,
+      `/api/plan-trip` now optionally takes `currentItinerary`, backend
+      prompts Gemini with that as context + the follow-up instruction and
+      re-validates the full response through the same schema/pipeline as a
+      fresh plan. Tested end-to-end via curl with a real instruction
+      ("replace the museum on day 1 with something outdoors") — Gemini
+      correctly swapped only that one stop and left the rest of the
+      itinerary untouched.
+- [x] `retry()` reworked to replay whichever action failed (plan or refine)
+      via a `lastArgsRef`, instead of always re-submitting the original prompt.
+
+## In flight / next
+
+- [ ] Re-verify mobile layout after the rename/polish/refinement-loop
+      changes (nothing structural should have broken it, but worth a fresh
+      look since CSS changed).
+- [ ] Write `~/PlanIt_Interview_Prep.txt` (outside this folder) — a study
+      doc covering the app, the architecture, every key file, the
+      reliability design and why, the refinement loop's design tradeoff,
+      the two real bugs found during dev, and anticipated interview
+      questions tied back to the original assignment PDF.
 
 ## Open decisions
 
@@ -76,6 +102,7 @@ Read `INSTRUCTIONS.md` first if this is a new session. This file is just
   (+ grant access), and confirm before any push happens.
 - **Screen recording**: still needed for submission — a user-side action
   (recording their own screen), not something done from here.
-- **Stretch goals**: none started. Only worth doing if time remains after
-  the above — priority order per `INSTRUCTIONS.md`/original plan: refinement
-  loop > localStorage session save > dark mode/animation.
+- **Remaining stretch goals**: refinement loop is done. localStorage session
+  save and a manual dark-mode toggle are not implemented (dark mode already
+  follows OS preference automatically via CSS, just no in-app switch) —
+  only worth doing if time remains.

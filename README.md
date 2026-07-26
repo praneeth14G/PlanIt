@@ -1,7 +1,8 @@
-# Trip Planner
+# PlanIt
 
 Describe a trip in plain language, get back a day-by-day itinerary you can
-expand, tweak, and reorder — not a chat transcript.
+expand, tweak, reorder, and refine with follow-up instructions — not a chat
+transcript.
 
 ## Setup
 
@@ -27,6 +28,9 @@ one of the example prompts — and submit. Once the itinerary comes back:
 - Click a day to expand/collapse it
 - Use the up/down arrows on a stop to reorder it within its day
 - Use the × to remove a stop
+- Use the "tweak it" bar below the itinerary to apply a follow-up
+  instruction (e.g. "swap day 2's museum for something outdoors") without
+  starting over
 
 ## Architecture
 
@@ -41,6 +45,13 @@ toward the right JSON shape at generation time — but the backend still
 validates every response against the shared schema before it reaches the
 client, and normalizes any failure into a clear error rather than passing
 along anything malformed.
+
+The refinement loop ("tweak it") reuses the exact same endpoint and
+validation path as the initial plan: the backend just includes the current
+itinerary as context alongside the follow-up instruction and asks Gemini for
+the whole itinerary back, edited. It's not a true JSON diff/patch — a
+deliberate simplicity tradeoff so the same reliability guarantees apply to
+both without a second code path to maintain.
 
 ## AI-usage note
 
@@ -67,13 +78,16 @@ by only using loading state for the button label, not to gate the button.
   artificial timeout, empty/malformed/wrong-shape model output, backend
   killed mid-request) and confirming clean handling, plus manual browser
   testing for interactivity, double-submit, and mobile layout.
-- No refinement loop (follow-up prompts that edit the existing itinerary) —
-  listed as a stretch goal, not implemented.
+- The refinement loop resends the full itinerary as context on every tweak
+  rather than diffing — fine at this scale, would need rethinking for very
+  long itineraries (token cost/latency).
 - No streaming — deliberately skipped. Streaming partial JSON while still
   validating the final shape against the schema adds real complexity and
   works against the reliability focus that's the actual point of this
   assignment, so it wasn't worth the tradeoff in the time available.
-- No session save/reload or dark mode (stretch goals, not implemented).
+- No session save/reload (stretch goal, not implemented).
+- Dark mode follows the OS/browser preference automatically; there's no
+  in-app manual toggle.
 - Reordering is within a day only — no moving a stop to a different day.
 - Primarily tested in Chrome/Safari on macOS; not tested against older
   browsers.

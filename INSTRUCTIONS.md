@@ -19,10 +19,13 @@ communication (15%).
 
 ## What we're building
 
-**Trip planner.** User describes a trip in free text → Gemini returns a
-day-by-day itinerary as JSON → UI lets the user expand/collapse days, remove
-stops, and reorder stops within a day (up/down buttons, not drag-and-drop —
-more reliable on mobile touch and easier to explain live).
+**PlanIt — a trip planner.** User describes a trip in free text → Gemini
+returns a day-by-day itinerary as JSON → UI lets the user expand/collapse
+days, remove stops, and reorder stops within a day (up/down buttons, not
+drag-and-drop — more reliable on mobile touch and easier to explain live).
+There's also a refinement loop: a "tweak it" bar below the itinerary takes a
+follow-up instruction and edits the existing plan in place instead of
+regenerating from scratch (stretch goal, implemented — see below).
 
 ## Stack & architecture
 
@@ -33,11 +36,18 @@ more reliable on mobile touch and easier to explain live).
 - `shared/` — Zod schema (`itinerary.ts`) that is the single source of truth
   for "what does a valid itinerary look like." Both frontend and backend
   import it.
-- AI: Google Gemini (`@google/genai`), called with `responseSchema`/JSON mode
-  so the model is constrained toward the right shape at generation time.
-  This reduces bad output but does **not** replace validation — the backend
-  still runs the raw response through the Zod schema before it ever reaches
-  the client.
+- AI: Google Gemini (`@google/genai`, model `gemini-flash-latest` — not a
+  pinned version, since `gemini-2.5-flash` got cut off for new API keys
+  mid-build), called with `responseSchema`/JSON mode so the model is
+  constrained toward the right shape at generation time. This reduces bad
+  output but does **not** replace validation — the backend still runs the
+  raw response through the Zod schema before it ever reaches the client.
+- Refinement loop: `POST /api/plan-trip` optionally takes a
+  `currentItinerary` alongside `prompt`. When present, the backend prompts
+  Gemini with the existing itinerary as context plus the follow-up
+  instruction, and asks for the whole itinerary back, edited — same schema,
+  same validation path as a fresh plan. Not a real JSON diff/patch; that's a
+  deliberate simplicity tradeoff.
 - npm workspaces monorepo (root `package.json` lists `shared`, `server`,
   `frontend`). `npm install && npm start` from repo root runs both frontend
   and backend together via `concurrently`.
@@ -58,6 +68,16 @@ more reliable on mobile touch and easier to explain live).
    banner on top, and keeps the user's typed input intact — nothing gets wiped.
 6. Once validated at the API boundary, components trust the shape — no
    defensive optional-chaining sprinkled through the render layer.
+7. Retry (`useTripPlanner.retry`) replays whichever action actually failed —
+   a fresh plan or a refinement — via a `lastArgsRef`, rather than always
+   re-submitting the original prompt. Needed once there were two kinds of
+   submission (plan vs. refine) that could each fail independently.
+
+Real bug found only by manual testing, not code review: the submit button
+was disabled while `state.status === "loading"`, which meant a resubmit
+could never actually happen — the abort/request-id guard above was correct
+but unreachable. Fixed by using loading state only for the button's label,
+never to disable it.
 
 ## Conventions to keep following
 
@@ -76,9 +96,9 @@ more reliable on mobile touch and easier to explain live).
 - `server/src/gemini.ts` — model call, prompt, timeout
 - `server/src/routes/plan.ts` — validation + error normalization
 - `frontend/src/hooks/useTripPlanner.ts` — the state machine
-- `frontend/src/lib/api.ts` — fetch wrapper, assigns client-side stop ids
+- `frontend/src/lib/api.ts` — fetch wrapper, assigns/strips client-side stop ids
 - `frontend/src/components/` — `TripForm`, `StatusBanner`, `ItineraryView`,
-  `DayCard`, `StopRow`
+  `DayCard`, `StopRow`, `RefineBar` (the "tweak it" follow-up input)
 
 ## Running it
 
