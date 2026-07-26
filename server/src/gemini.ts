@@ -1,4 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import type { Itinerary } from "@flam/shared";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY ?? "" });
 
@@ -48,21 +49,42 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
-export async function generateItinerary(prompt: string): Promise<string> {
-  const call = ai.models.generateContent({
-    model: "gemini-flash-latest",
-    contents: `You are a trip-planning assistant. Given a traveler's description of a trip, produce a realistic day-by-day itinerary.
+const FRESH_INSTRUCTIONS = `Given a traveler's description of a trip, produce a realistic day-by-day itinerary.
 
 Trip description:
 """
-${prompt}
+{{PROMPT}}
 """
 
 Rules:
 - 2 to 5 stops per day, ordered by time of day.
 - Keep each stop's description to one or two sentences.
 - Include a "time" like "9:00 AM" when the activity is time-bound; omit it otherwise.
-- durationDays must match the number of entries in "days".`,
+- durationDays must match the number of entries in "days".`;
+
+// The refinement loop doesn't diff/patch JSON - it just hands Gemini the
+// existing itinerary plus the follow-up instruction and asks for the whole
+// thing back, edited. Same schema, same validation path as a fresh plan;
+// a real patch format would add real complexity for not much practical gain
+// at this scale.
+const REFINE_INSTRUCTIONS = `A traveler already has this itinerary:
+"""
+{{CURRENT}}
+"""
+
+They asked for this change: "{{PROMPT}}"
+
+Return the full itinerary again in the same JSON shape, with that change
+applied and everything else left as-is unless the change implies otherwise.`;
+
+export async function generateItinerary(prompt: string, current?: Itinerary): Promise<string> {
+  const instructions = current
+    ? REFINE_INSTRUCTIONS.replace("{{CURRENT}}", JSON.stringify(current)).replace("{{PROMPT}}", prompt)
+    : FRESH_INSTRUCTIONS.replace("{{PROMPT}}", prompt);
+
+  const call = ai.models.generateContent({
+    model: "gemini-flash-latest",
+    contents: `You are a trip-planning assistant. ${instructions}`,
     config: {
       responseMimeType: "application/json",
       responseSchema,

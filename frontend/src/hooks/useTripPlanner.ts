@@ -42,8 +42,10 @@ export function useTripPlanner() {
   const [state, dispatch] = useReducer(reducer, { status: "idle" });
   const latestRequestId = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
+  const lastArgsRef = useRef<{ prompt: string; current?: ItineraryWithIds } | null>(null);
 
-  const submit = useCallback(async (prompt: string) => {
+  const submit = useCallback(async (prompt: string, current?: ItineraryWithIds) => {
+    lastArgsRef.current = { prompt, current };
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -52,7 +54,7 @@ export function useTripPlanner() {
     dispatch({ type: "submit" });
 
     try {
-      const itinerary = await fetchItinerary(prompt, controller.signal);
+      const itinerary = await fetchItinerary(prompt, controller.signal, current);
       if (latestRequestId.current !== requestId) return;
       dispatch({ type: "success", itinerary });
     } catch (err) {
@@ -62,9 +64,16 @@ export function useTripPlanner() {
     }
   }, []);
 
+  // Retries whichever attempt failed - a fresh plan or a refinement - rather
+  // than always re-submitting the original prompt.
+  const retry = useCallback(() => {
+    if (!lastArgsRef.current) return;
+    submit(lastArgsRef.current.prompt, lastArgsRef.current.current);
+  }, [submit]);
+
   const edit = useCallback((itinerary: ItineraryWithIds) => {
     dispatch({ type: "edit", itinerary });
   }, []);
 
-  return { state, submit, edit };
+  return { state, submit, retry, edit };
 }

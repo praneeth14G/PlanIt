@@ -14,9 +14,14 @@ planRouter.post("/plan-trip", async (req, res) => {
     return;
   }
 
+  // currentItinerary is only ever context for the prompt, never trusted as-is -
+  // if it doesn't parse, we silently fall back to a fresh plan instead of erroring.
+  const currentParsed = itinerarySchema.safeParse(req.body?.currentItinerary);
+  const current = currentParsed.success ? currentParsed.data : undefined;
+
   let raw: string;
   try {
-    raw = await generateItinerary(prompt);
+    raw = await generateItinerary(prompt, current);
   } catch (err) {
     console.error("gemini call failed:", err);
     const timedOut = err instanceof Error && err.message === "TIMEOUT";

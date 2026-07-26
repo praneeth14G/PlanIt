@@ -4,13 +4,26 @@
   padding: 32px 20px 80px;
 }
 
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-logo {
+  width: 26px;
+  height: 26px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
 .app h1 {
   font-size: 28px;
-  margin: 0 0 4px;
+  margin: 0;
 }
 
 .tagline {
-  margin: 0 0 24px;
+  margin: 4px 0 24px;
   color: var(--text);
 }
 
@@ -104,6 +117,8 @@
 
 .status-idle {
   color: var(--text);
+  border: 1px dashed var(--border);
+  font-size: 13px;
 }
 
 .status-loading {
@@ -142,8 +157,20 @@
 
 /* --- itinerary --- */
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .itinerary {
   margin-top: 28px;
+  animation: fadeInUp 0.35s ease;
 }
 
 .itinerary-header {
@@ -164,6 +191,11 @@
   margin-bottom: 10px;
   overflow: hidden;
   background: var(--card-bg);
+  transition: box-shadow 0.15s ease;
+}
+
+.day-card:has(.day-header:hover) {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .day-header {
@@ -195,6 +227,17 @@
   font-size: 18px;
   color: var(--text);
   flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.stop-list-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+
+.stop-list-wrapper.open {
+  grid-template-rows: 1fr;
 }
 
 .stop-list {
@@ -204,6 +247,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow: hidden;
+  min-height: 0;
 }
 
 .stop-row {
@@ -281,6 +326,46 @@
   font-size: 13px;
   color: var(--text);
   padding-top: 10px;
+}
+
+/* --- refine bar --- */
+
+.refine-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.refine-bar input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text-h);
+  font: inherit;
+}
+
+.refine-bar input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.refine-bar button {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.refine-bar button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 @media (max-width: 480px) {

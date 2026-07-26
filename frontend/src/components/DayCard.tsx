@@ -30,7 +30,7 @@ export function DayCard({ day, defaultOpen = false, onStopsChange }: Props) {
         <span className="day-title">{day.title}</span>
         <span className="day-toggle">{open ? "−" : "+"}</span>
       </button>
-      {open && (
+      <div className={`stop-list-wrapper${open ? " open" : ""}`} aria-hidden={!open}>
         <ul className="stop-list">
           {day.stops.map((stop, index) => (
             <StopRow
@@ -45,7 +45,7 @@ export function DayCard({ day, defaultOpen = false, onStopsChange }: Props) {
           ))}
           {day.stops.length === 0 && <li className="empty-day">No stops left for this day.</li>}
         </ul>
-      )}
+      </div>
     </section>
   );
 }

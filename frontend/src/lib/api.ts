@@ -2,11 +2,15 @@ import type { ApiErrorBody, Itinerary, ItineraryWithIds } from "@flam/shared";
 
 export class TripPlannerError extends Error {}
 
-export async function fetchItinerary(prompt: string, signal: AbortSignal): Promise<ItineraryWithIds> {
+export async function fetchItinerary(
+  prompt: string,
+  signal: AbortSignal,
+  current?: ItineraryWithIds,
+): Promise<ItineraryWithIds> {
   const res = await fetch("/api/plan-trip", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt }),
+    body: JSON.stringify(current ? { prompt, currentItinerary: withoutIds(current) } : { prompt }),
     signal,
   });
 
@@ -35,6 +39,16 @@ function withIds(itinerary: Itinerary): ItineraryWithIds {
     days: itinerary.days.map((day) => ({
       ...day,
       stops: day.stops.map((stop) => ({ ...stop, id: crypto.randomUUID() })),
+    })),
+  };
+}
+
+function withoutIds(itinerary: ItineraryWithIds): Itinerary {
+  return {
+    ...itinerary,
+    days: itinerary.days.map(({ stops, ...day }) => ({
+      ...day,
+      stops: stops.map(({ id: _id, ...stop }) => stop),
     })),
   };
 }
