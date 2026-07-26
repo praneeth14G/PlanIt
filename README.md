@@ -4,7 +4,7 @@ Describe a trip in plain language, get back a day-by-day itinerary you can
 expand, tweak, reorder, and refine with follow-up instructions — not a chat
 transcript.
 
-**Live demo:** _(link goes here once deployed)_
+**Live demo:** https://planit-olive.vercel.app 
 
 ## Setup
 
