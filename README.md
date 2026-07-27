@@ -8,7 +8,7 @@ transcript.
 
 ## Demo video
 
-[TODO: add Drive link here](https://drive.google.com/file/d/1DqoRBcMgmowHow84lPsIuK-pY_wtuRvu/view?usp=sharing)
+[Demo Link](https://drive.google.com/file/d/1DqoRBcMgmowHow84lPsIuK-pY_wtuRvu/view?usp=sharing)
 
 ## Setup
 
