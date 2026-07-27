@@ -24,19 +24,15 @@ required for the free tier).
 
 ## Usage
 
-The app opens on a short splash screen (a spinning compass, "PlanIt" set in
-a flowing script) that transitions into the planner on its own after about
-a second and a half — no click needed.
-
-Type a trip description (destination, length, pace, interests) — or click
-one of the example prompts — and optionally tap a few "What are you into?"
+Type a trip description (destination, length, pace, interests) or click
+one of the example prompts and optionally tap a few "What are you into?"
 chips (food, sightseeing, devotional, nature, adventure sports, sports,
 shopping, nightlife). Those chips get folded into the prompt sent to Gemini
 so the itinerary leans toward what you picked. Submit and once the
 itinerary comes back:
 
 - A destination photo appears behind the trip header, pulled live from
-  Wikipedia/Wikimedia Commons (free, no API key, openly licensed) — falls
+  Wikipedia/Wikimedia Commons (free, no API key, openly licensed) falls
   back to a plain gradient if no photo is found for that place
 - A short "About {destination}" description and a "Spots you'll visit"
   highlights line appear below the photo, also pulled from Wikipedia's
@@ -83,7 +79,7 @@ itinerary comes back:
   itinerary shape, imported by both frontend and backend
 
 The model is called with Gemini's structured-output mode so it's constrained
-toward the right JSON shape at generation time — but the backend still
+toward the right JSON shape at generation time but the backend still
 validates every response against the shared schema before it reaches the
 client, and normalizes any failure into a clear error rather than passing
 along anything malformed.
@@ -91,23 +87,23 @@ along anything malformed.
 The refinement loop ("tweak it") reuses the exact same endpoint and
 validation path as the initial plan: the backend just includes the current
 itinerary as context alongside the follow-up instruction and asks Gemini for
-the whole itinerary back, edited. It's not a true JSON diff/patch — a
+the whole itinerary back, edited. It's not a true JSON diff/patch a
 deliberate simplicity tradeoff so the same reliability guarantees apply to
 both without a second code path to maintain.
 
 ## AI-usage note
 
-I used Claude Code throughout — for scaffolding the monorepo, writing the
+I used Claude Code throughout for scaffolding the monorepo, writing the
 initial implementation of the components/hooks/backend route, and for
 debugging (e.g. it caught that `gemini-2.5-flash` had been deprecated for
 new API keys by reading the actual error from the API and switching to
 `gemini-flash-latest`). I drove the architecture decisions (the reliability
-design — timeout, stale-response guard, validation boundary — is the actual
+design — timeout, stale-response guard, validation boundary is the actual
 point of this assignment, so I made sure I understood and could defend every
 piece of it, not just accepted what was generated).
 
 Worth calling out: manual testing caught a real bug that code review alone
-missed — the submit button was disabled while a request was loading, which
+missed the submit button was disabled while a request was loading, which
 meant the resubmit-before-first-response scenario (the whole reason the
 abort/request-id guard exists) could never actually be triggered. The guard
 code was correct; the UI in front of it silently made it unreachable. Fixed
@@ -115,7 +111,7 @@ by only using loading state for the button label, not to gate the button.
 
 ## Known limitations
 
-- No automated test suite — given the 8-hour budget, verification was
+- No automated test suite given the 8-hour budget, verification was
   manual/exploratory: deliberately breaking each failure path (bad key,
   artificial timeout, empty/malformed/wrong-shape model output, backend
   killed mid-request) and confirming clean handling, plus manual browser
@@ -123,27 +119,27 @@ by only using loading state for the button label, not to gate the button.
 - The refinement loop resends the full itinerary as context on every tweak
   rather than diffing — fine at this scale, would need rethinking for very
   long itineraries (token cost/latency).
-- No streaming — deliberately skipped. Streaming partial JSON while still
+- No streaming, deliberately skipped. Streaming partial JSON while still
   validating the final shape against the schema adds real complexity and
   works against the reliability focus that's the actual point of this
   assignment, so it wasn't worth the tradeoff in the time available.
 - No session save/reload (stretch goal, not implemented).
 - Dark mode follows the OS/browser preference automatically; there's no
   in-app manual toggle.
-- Reordering is within a day only — no moving a stop to a different day.
+- Reordering is within a day only, no moving a stop to a different day.
 - Destination photos come from a Wikipedia title lookup, not a proper image
-  search — obscure or ambiguous destination names may not resolve to a
+  search obscure or ambiguous destination names may not resolve to a
   photo and fall back to a plain gradient. The "is this actually a photo"
   check is a heuristic (rejects SVG-sourced images, which Wikipedia uses
   for locator maps/diagrams) and could in theory misfire on an unusual page.
-- No customer/venue ratings — every free source either requires an API key
+- No customer/venue ratings, every free source either requires an API key
   and account (Google Places, Foursquare) or doesn't exist, so this was
   scoped out rather than shipped as fake data.
 - The auto-adjust on adding a custom stop only shifts stops whose existing
   time is in a parseable "9:00 AM" / "14:30" shape; a stop with a vaguer
   time (e.g. "Morning") is left as-is rather than guessed at.
 - Reordering and inserting stops are disabled while a category filter is
-  active, to avoid ambiguous stop positions — clearing the filter re-enables
+  active, to avoid ambiguous stop positions, clearing the filter re-enables
   both.
 - Primarily tested in Chrome/Safari on macOS; not tested against older
   browsers.
