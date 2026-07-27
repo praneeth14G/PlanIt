@@ -6,6 +6,12 @@ transcript.
 
 **Live demo:** https://planit-olive.vercel.app 
 
+## Demo
+
+https://github.com/praneeth14G/PlanIt/blob/main/demo.mp4
+
+<video src="demo.mp4" controls width="600"></video>
+
 ## Setup
 
 ```bash
