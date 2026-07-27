@@ -6,6 +6,10 @@ transcript.
 
 **Live demo:** https://planit-olive.vercel.app 
 
+## Demo video
+
+TODO: add Drive link here
+
 ## Setup
 
 ```bash
