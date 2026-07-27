@@ -1,4 +1,5 @@
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import { INTEREST_CATEGORIES } from "../lib/categories";
 
 const EXAMPLES = [
   "5 days in Lisbon, relaxed pace, into food and architecture",
@@ -14,11 +15,20 @@ interface Props {
 }
 
 export function TripForm({ value, onValueChange, isLoading, onSubmit }: Props) {
+  const [interests, setInterests] = useState<string[]>([]);
+
+  function toggleInterest(label: string) {
+    setInterests((prev) => (prev.includes(label) ? prev.filter((i) => i !== label) : [...prev, label]));
+  }
+
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const trimmed = value.trim();
     if (!trimmed) return;
-    onSubmit(trimmed);
+    const withInterests = interests.length
+      ? `${trimmed}\n\nEspecially interested in: ${interests.join(", ")}.`
+      : trimmed;
+    onSubmit(withInterests);
   }
 
   return (
@@ -31,6 +41,24 @@ export function TripForm({ value, onValueChange, isLoading, onSubmit }: Props) {
         onChange={(e) => onValueChange(e.target.value)}
         placeholder="Where are you going, for how long, and what are you into?"
       />
+
+      <div className="interests-field">
+        <span className="interests-label">What are you into? (optional)</span>
+        <div className="interest-chips">
+          {INTEREST_CATEGORIES.map(({ label, emoji }) => (
+            <button
+              key={label}
+              type="button"
+              className={`interest-chip${interests.includes(label) ? " active" : ""}`}
+              onClick={() => toggleInterest(label)}
+              aria-pressed={interests.includes(label)}
+            >
+              <span aria-hidden="true">{emoji}</span> {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="trip-form-footer">
         <div className="examples">
           {EXAMPLES.map((example) => (

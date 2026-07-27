@@ -5,21 +5,23 @@ interface Props {
   isFirst: boolean;
   isLast: boolean;
   onRemove: () => void;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
 }
 
 export function StopRow({ stop, isFirst, isLast, onRemove, onMoveUp, onMoveDown }: Props) {
   return (
     <li className="stop-row">
-      <div className="stop-move">
-        <button type="button" onClick={onMoveUp} disabled={isFirst} aria-label="Move earlier in the day">
-          ↑
-        </button>
-        <button type="button" onClick={onMoveDown} disabled={isLast} aria-label="Move later in the day">
-          ↓
-        </button>
-      </div>
+      {(onMoveUp || onMoveDown) && (
+        <div className="stop-move">
+          <button type="button" onClick={onMoveUp} disabled={isFirst || !onMoveUp} aria-label="Move earlier in the day">
+            ↑
+          </button>
+          <button type="button" onClick={onMoveDown} disabled={isLast || !onMoveDown} aria-label="Move later in the day">
+            ↓
+          </button>
+        </div>
+      )}
       <div className="stop-body">
         <div className="stop-heading">
           {stop.time && <span className="stop-time">{stop.time}</span>}

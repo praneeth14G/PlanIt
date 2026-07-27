@@ -24,12 +24,37 @@ required for the free tier).
 
 ## Usage
 
-Type a trip description (destination, length, pace, interests) — or click
-one of the example prompts — and submit. Once the itinerary comes back:
+The app opens on a short splash screen (a spinning compass, "PlanIt" set in
+a flowing script) that transitions into the planner on its own after about
+a second and a half — no click needed.
 
+Type a trip description (destination, length, pace, interests) — or click
+one of the example prompts — and optionally tap a few "What are you into?"
+chips (food, sightseeing, devotional, nature, adventure sports, sports,
+shopping, nightlife). Those chips get folded into the prompt sent to Gemini
+so the itinerary leans toward what you picked. Submit and once the
+itinerary comes back:
+
+- A destination photo appears behind the trip header, pulled live from
+  Wikipedia/Wikimedia Commons (free, no API key, openly licensed) — falls
+  back to a plain gradient if no photo is found for that place
+- A short "About {destination}" description and a "Spots you'll visit"
+  highlights line appear below the photo, also pulled from Wikipedia's
+  summary API. There's no real customer-ratings source that's both free and
+  keyless (Google/Foursquare places APIs need your own account and API
+  key), so ratings were deliberately left out rather than faked.
+- Category filter chips (built from whichever categories the model actually
+  used, e.g. "Food & Drink", "Sightseeing") let you show just one kind of
+  stop across the whole trip
 - Click a day to expand/collapse it
 - Use the up/down arrows on a stop to reorder it within its day
 - Use the × to remove a stop
+- Use "+ Add stop here" between any two stops to insert one of your own
+  (name, category, description, time, duration) — every later stop that
+  day with a parseable time automatically shifts later by that stop's
+  duration, so the rest of the day's schedule stays consistent
+- Reordering and adding stops are only available with the "All" filter
+  active, to keep stop positions unambiguous
 - Use the "tweak it" bar below the itinerary to apply a follow-up
   instruction (e.g. "swap day 2's museum for something outdoors") without
   starting over
@@ -37,6 +62,21 @@ one of the example prompts — and submit. Once the itinerary comes back:
 ## Architecture
 
 - `frontend/` — Vite + React + TypeScript
+  - `lib/destinationInfo.ts` — looks up a destination's photo and short
+    description via Wikipedia's page-summary REST API directly from the
+    browser (no backend involved, in-memory cache per destination, and
+    filters out locator-map/diagram images so only real photos are used),
+    consumed once per itinerary in `components/ItineraryView.tsx` and
+    passed down to `DestinationHero.tsx` and `DestinationAbout.tsx`
+  - `lib/categories.ts` — the shared list of interest/category suggestions
+    used by both the trip-form chips and the add-stop category field
+  - `lib/time.ts` — parses/formats "9:00 AM"-style stop times, used to push
+    later stops back when a custom one is inserted
+  - `components/SplashScreen.tsx` — the opening compass/logo animation,
+    shown for a fixed ~1.7s on every load (`App.tsx` owns the timer)
+  - `components/CategoryFilter.tsx`, `components/AddStopForm.tsx` — the
+    stop-filtering and custom-stop-insertion UI, both pure client-side state
+    (no round trip to the backend)
 - `server/` — small Express + TypeScript backend that holds the Gemini API
   key and proxies the model call (key never reaches the browser)
 - `shared/` — a Zod schema that's the single source of truth for the
@@ -91,6 +131,20 @@ by only using loading state for the button label, not to gate the button.
 - Dark mode follows the OS/browser preference automatically; there's no
   in-app manual toggle.
 - Reordering is within a day only — no moving a stop to a different day.
+- Destination photos come from a Wikipedia title lookup, not a proper image
+  search — obscure or ambiguous destination names may not resolve to a
+  photo and fall back to a plain gradient. The "is this actually a photo"
+  check is a heuristic (rejects SVG-sourced images, which Wikipedia uses
+  for locator maps/diagrams) and could in theory misfire on an unusual page.
+- No customer/venue ratings — every free source either requires an API key
+  and account (Google Places, Foursquare) or doesn't exist, so this was
+  scoped out rather than shipped as fake data.
+- The auto-adjust on adding a custom stop only shifts stops whose existing
+  time is in a parseable "9:00 AM" / "14:30" shape; a stop with a vaguer
+  time (e.g. "Morning") is left as-is rather than guessed at.
+- Reordering and inserting stops are disabled while a category filter is
+  active, to avoid ambiguous stop positions — clearing the filter re-enables
+  both.
 - Primarily tested in Chrome/Safari on macOS; not tested against older
   browsers.
 

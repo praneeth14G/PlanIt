@@ -173,16 +173,100 @@
   animation: fadeInUp 0.35s ease;
 }
 
-.itinerary-header {
+/* --- destination hero --- */
+
+.destination-hero {
+  position: relative;
+  min-height: 170px;
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 16px;
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 12px;
+  align-items: flex-end;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  background-size: cover;
+  background-position: center;
+  transition: background-image 0.25s ease;
 }
 
-.itinerary-header span {
-  color: var(--text);
+.destination-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+.destination-hero-text {
+  position: relative;
+  padding: 16px 18px;
+  color: #fff;
+}
+
+.destination-hero-text h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 22px;
+}
+
+.destination-hero-text span {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.destination-about {
+  margin: 0 0 16px;
+}
+
+.destination-description {
+  margin: 0 0 6px;
   font-size: 14px;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.destination-spots {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.destination-spots-label {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+/* --- category filter --- */
+
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.filter-chip {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.filter-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.filter-note {
+  font-size: 12px;
+  color: var(--text);
+  padding: 6px 0 0;
+  font-style: italic;
 }
 
 .day-card {
@@ -328,6 +412,145 @@
   padding-top: 10px;
 }
 
+/* --- interest chips (trip form) --- */
+
+.interests-field {
+  margin-top: 14px;
+}
+
+.interests-label {
+  display: block;
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.interest-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.interest-chip {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.interest-chip.active {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* --- add / insert a stop --- */
+
+.insert-slot {
+  display: flex;
+  justify-content: center;
+}
+
+.insert-stop-button {
+  border: 1px dashed var(--border);
+  background: transparent;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.insert-stop-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.add-stop-form {
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--accent-bg);
+}
+
+.add-stop-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-stop-row {
+  display: flex;
+  gap: 8px;
+}
+
+.add-stop-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.add-stop-form input,
+.add-stop-form textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text-h);
+  font: inherit;
+  font-size: 13px;
+}
+
+.duration-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.duration-field input {
+  width: 60px;
+}
+
+.add-stop-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.add-stop-actions button {
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.add-stop-actions button[type="submit"] {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+}
+
+.add-stop-actions button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.add-stop-actions button[type="button"] {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
 /* --- refine bar --- */
 
 .refine-bar {
@@ -389,5 +612,79 @@
   .refine-bar {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+/* --- splash screen --- */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: linear-gradient(160deg, var(--accent), var(--accent2));
+  animation: splash-in 0.3s ease;
+}
+
+.splash-exit {
+  animation: splash-out 0.4s ease forwards;
+}
+
+@keyframes splash-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes splash-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+
+.splash-compass {
+  width: 64px;
+  height: 64px;
+  color: #fff;
+  animation: splash-spin 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@keyframes splash-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(720deg);
+  }
+}
+
+.splash-title {
+  font-family: "Pacifico", cursive;
+  font-size: 52px;
+  font-weight: 400;
+  color: #fff;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-compass {
+    animation: none;
+  }
+
+  .splash-exit {
+    animation: none;
+    opacity: 0;
   }
 }

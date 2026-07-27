@@ -1,13 +1,17 @@
 :root {
-  --text: #4b4653;
-  --text-h: #1a1721;
-  --bg: #fdfdfc;
-  --card-bg: #ffffff;
-  --border: #e3e1e6;
-  --accent: #7c3aed;
-  --accent-bg: rgba(124, 58, 237, 0.08);
-  --danger: #b3261e;
-  --danger-bg: rgba(179, 38, 30, 0.08);
+  /* Travel/nature/food palette: forest green (primary, greenery) paired
+     with a terracotta secondary (warmth, food, sunsets) over a warm
+     sand/paper background (travel-journal feel). */
+  --text: #5b5346;
+  --text-h: #2b2a25;
+  --bg: #faf6ef;
+  --card-bg: #fffdf8;
+  --border: #e6ddcc;
+  --accent: #2f8f5b;
+  --accent-bg: rgba(47, 143, 91, 0.1);
+  --accent2: #e0703c;
+  --danger: #c0392b;
+  --danger-bg: rgba(192, 57, 43, 0.08);
 
   font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
   color-scheme: light dark;
@@ -18,13 +22,14 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #c7c3cf;
-    --text-h: #f2f0f5;
-    --bg: #17151c;
-    --card-bg: #201d27;
-    --border: #322e3b;
-    --accent: #a685f2;
-    --accent-bg: rgba(166, 133, 242, 0.14);
+    --text: #b9c4bb;
+    --text-h: #eef2ee;
+    --bg: #131a16;
+    --card-bg: #1b2420;
+    --border: #2c3a33;
+    --accent: #6fcf97;
+    --accent-bg: rgba(111, 207, 151, 0.14);
+    --accent2: #f0975a;
     --danger: #e3897f;
     --danger-bg: rgba(227, 137, 127, 0.12);
   }
